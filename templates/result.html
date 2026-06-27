@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Segmentation Result</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: transparent; /* Transparent background */
+            border-radius: 8px;
+        }
+
+        /* Header Styles */
+        h1 {
+            font-size: 2.5em;
+            color: #007bff; /* Blue color for the title */
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            font-size: 1.8em;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+
+        /* Image Styling */
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px; /* Space between the two images */
+            flex-wrap: wrap; /* Wrap images on smaller screens */
+        }
+
+        img {
+            width: 500px; /* Fixed width to ensure consistent sizing */
+            height: 300px; /* Fixed height for uniform display */
+            object-fit: cover; /* Ensures images retain their aspect ratio */
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            border: 5px solid #007bff; /* Blue border around images */
+        }
+
+        /* Link Styling */
+        a {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            text-decoration: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            margin-top: 30px;
+            transition: background-color 0.3s ease;
+        }
+
+        a:hover {
+            background-color: #0056b3;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            img {
+                width: 100%; /* Take full width of the screen on small devices */
+                height: auto; /* Maintain aspect ratio */
+            }
+
+            .image-container {
+                flex-direction: column; /* Stack images vertically */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Segmentation Result</h1>
+
+    <div class="image-container">
+        <div>
+            <h2>Original Image</h2>
+            <img src="{{ original_url }}" alt="Original Image">
+        </div>
+
+        <div>
+            <h2>Segmented Image</h2>
+            <img src="{{ result_url }}" alt="Segmented Image">
+        </div>
+    </div>
+
+    <a href="/process">Process Another Image</a>
+</div>
+
+</body>
+</html>

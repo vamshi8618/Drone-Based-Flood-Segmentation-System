@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drone Control Dashboard</title>
+    <style>
+        body {
+            background: #050505;
+            color: #f0f0f0;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0b243b 0%, #022b54 100%);
+            padding: 24px 32px;
+            color: #fff;
+        }
+
+        header .topbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+            letter-spacing: 0.04em;
+        }
+
+        header .nav-links {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        header .nav-links a,
+        header .nav-links button {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.12);
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        header .nav-links a:hover,
+        header .nav-links button:hover {
+            background: rgba(255, 255, 255, 0.22);
+        }
+
+        main {
+            padding: 24px 32px;
+            display: grid;
+            gap: 24px;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 24px 40px rgba(0, 0, 0, 0.18);
+        }
+
+        .panel h2 {
+            margin-top: 0;
+            margin-bottom: 16px;
+            font-size: 1.4rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.35fr 0.9fr;
+            gap: 24px;
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .telemetry-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .metric {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: left;
+        }
+
+        .metric strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            color: #a8d0ff;
+        }
+
+        .metric span {
+            font-size: 1.25rem;
+        }
+
+        .live-stream {
+            display: grid;
+            gap: 16px;
+        }
+
+        #videoStream {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            border-radius: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.16);
+            object-fit: cover;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .controls button,
+        .secondary buttons {
+            width: 100%;
+        }
+
+        .joystick-panel {
+            display: grid;
+            gap: 20px;
+        }
+
+        .joystick-card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            border-radius: 18px;
+            padding: 18px;
+        }
+
+        .joystick-card h3 {
+            margin: 0 0 12px;
+            font-size: 1rem;
+            color: #cfd8ff;
+        }
+
+        .joystick {
+            width: 160px;
+            height: 160px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .joystick-ring {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.18);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stick-ball {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6370, #ff9d9f);
+            position: absolute;
+            top: 44px;
+            left: 44px;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.24);
+            transition: transform 0.1s ease;
+        }
+
+        .stick-ball.blue {
+            background: linear-gradient(135deg, #5f8bff, #88b6ff);
+        }
+
+        #stick1,
+        #stick2 {
+            width: 72px;
+            height: 72px;
+        }
+
+        .status-text {
+            font-size: 0.95rem;
+            margin-top: 12px;
+            color: #d8dee9;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .mode-selector select {
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(0, 0, 0, 0.4);
+            color: #f7f7f7;
+        }
+
+        .mode-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .button-primary {
+            background: linear-gradient(135deg, #1d72ff, #6e8cff);
+        }
+
+        .button-secondary {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        @media (max-width: 980px) {
+            .dashboard-grid,
+            .control-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="topbar">
+        <div>
+            <h1>Flood Rescue Drone Dashboard</h1>
+            <p style="margin:4px 0 0;color:#c3d4ff;">Manual and autonomous drone control with vision and telemetry integration.</p>
+        </div>
+        <div class="nav-links">
+            <a href="/process">Segmentation</a>
+            <a href="/process">Upload Image</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+</header>
+<main>
+    <div class="dashboard-grid">
+        <section class="panel live-stream">
+            <h2>Live Stream</h2>
+            <img id="videoStream" src="" alt="Drone live stream" />
+            <div class="controls">
+                <button class="button-primary" id="takeoffButton">Takeoff</button>
+                <button class="button-secondary" id="landButton">Land</button>
+                <button class="button-secondary" id="hoverButton">Hover</button>
+                <button class="button-secondary" id="stopButton">Emergency Stop</button>
+                <button class="button-secondary" id="trackButton">Auto Track</button>
+                <button class="button-secondary" id="segmentButton">Process Frame</button>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Telemetry & Flight Mode</h2>
+            <div class="telemetry-row">
+                <div class="metric">
+                    <strong>Battery</strong>
+                    <span id="batteryValue">--</span>
+                </div>
+                <div class="metric">
+                    <strong>Altitude</strong>
+                    <span id="altitudeValue">--</span>
+                </div>
+                <div class="metric">
+                    <strong>GPS</strong>
+                    <span id="gpsValue">--</span>
+                </div>
+                <div class="metric">
+                    <strong>Flight State</strong>
+                    <span id="stateValue">--</span>
+                </div>
+            </div>
+            <div class="mode-selector">
+                <label for="flightMode">Flight Mode</label>
+                <select id="flightMode">
+                    <option value="manual">Manual</option>
+                    <option value="auto_track">Auto Track</option>
+                    <option value="segment_only">Segmentation</option>
+                </select>
+                <button class="button-primary" id="modeUpdateButton">Apply Mode</button>
+            </div>
+            <div class="status-text" id="modeStatus">Current mode: manual</div>
+        </section>
+    </div>
+
+    <section class="panel joystick-panel">
+        <h2>Manual Control</h2>
+        <div class="control-grid">
+            <div class="joystick-card">
+                <h3>Throttle / Yaw</h3>
+                <div class="joystick">
+                    <div class="joystick-ring">
+                        <div class="stick-ball" id="stick1"></div>
+                    </div>
+                </div>
+                <p class="status-text" id="status1">Throttle: 0, Yaw: 0</p>
+            </div>
+            <div class="joystick-card">
+                <h3>Pitch / Roll</h3>
+                <div class="joystick">
+                    <div class="joystick-ring">
+                        <div class="stick-ball blue" id="stick2"></div>
+                    </div>
+                </div>
+                <p class="status-text" id="status2">Pitch: 0, Roll: 0</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+const cameraIP = 'http://192.168.97.88';
+const telemetryInterval = 2500;
+const commandHeaders = { 'Content-Type': 'application/json' };
+let currentMode = 'manual';
+
+function updateVideoStream() {
+    document.getElementById('videoStream').src = `${cameraIP}:81/stream`;
+}
+
+async function apiCommand(command, params = {}) {
+    try {
+        const response = await fetch('/api/command', {
+            method: 'POST',
+            headers: commandHeaders,
+            body: JSON.stringify({ command, params })
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Command error', error);
+        return { status: 'error', message: error.message };
+    }
+}
+
+async function updateTelemetry() {
+    try {
+        const response = await fetch('/api/telemetry');
+        const data = await response.json();
+        if (data.status === 'ok') {
+            const telemetry = data.telemetry || {};
+            document.getElementById('batteryValue').innerText = telemetry.battery ?? '--';
+            document.getElementById('altitudeValue').innerText = telemetry.altitude ?? '--';
+            document.getElementById('gpsValue').innerText = telemetry.gps ? JSON.stringify(telemetry.gps) : '--';
+            document.getElementById('stateValue').innerText = telemetry.state ?? '--';
+        }
+    } catch (error) {
+        console.warn('Telemetry unavailable', error);
+    }
+}
+
+function setMode(mode) {
+    currentMode = mode;
+    document.getElementById('modeStatus').innerText = `Current mode: ${mode.replace('_', ' ')}`;
+    if (mode === 'auto_track') {
+        apiCommand('follow_distance', { distance: 5.0 });
+    }
+}
+
+function dispatchManualControl() {
+    if (currentMode !== 'manual') return;
+    const throttle = parseFloat(joystick1.value.y.toFixed(2));
+    const yaw = parseFloat(joystick1.value.x.toFixed(2));
+    const pitch = parseFloat(joystick2.value.y.toFixed(2));
+    const roll = parseFloat(joystick2.value.x.toFixed(2));
+
+    document.getElementById('status1').innerText = `Throttle: ${throttle}, Yaw: ${yaw}`;
+    document.getElementById('status2').innerText = `Pitch: ${pitch}, Roll: ${roll}`;
+
+    apiCommand('set_attitude', { roll, pitch, yaw, throttle });
+}
+
+function initButtons() {
+    document.getElementById('takeoffButton').addEventListener('click', () => apiCommand('takeoff'));
+    document.getElementById('landButton').addEventListener('click', () => apiCommand('land'));
+    document.getElementById('hoverButton').addEventListener('click', () => apiCommand('hover'));
+    document.getElementById('stopButton').addEventListener('click', () => apiCommand('stop'));
+    document.getElementById('trackButton').addEventListener('click', () => setMode('auto_track'));
+    document.getElementById('segmentButton').addEventListener('click', () => window.location.href = '/process');
+    document.getElementById('modeUpdateButton').addEventListener('click', () => {
+        const selected = document.getElementById('flightMode').value;
+        setMode(selected);
+    });
+}
+
+class JoystickController {
+    constructor(stickID, maxDistance, deadzone) {
+        this.id = stickID;
+        this.element = document.getElementById(stickID);
+        this.dragStart = null;
+        this.touchId = null;
+        this.active = false;
+        this.value = { x: 0, y: 0 };
+        this.maxDistance = maxDistance;
+        this.deadzone = deadzone;
+        this.initEvents();
+    }
+
+    initEvents() {
+        const stick = this.element;
+        stick.addEventListener('mousedown', this.handleDown.bind(this));
+        stick.addEventListener('touchstart', this.handleDown.bind(this));
+        document.addEventListener('mousemove', this.handleMove.bind(this), { passive: false });
+        document.addEventListener('touchmove', this.handleMove.bind(this), { passive: false });
+        document.addEventListener('mouseup', this.handleUp.bind(this));
+        document.addEventListener('touchend', this.handleUp.bind(this));
+    }
+
+    handleDown(event) {
+        this.active = true;
+        this.element.style.transition = '0s';
+        event.preventDefault();
+        const point = event.changedTouches ? event.changedTouches[0] : event;
+        this.dragStart = { x: point.clientX, y: point.clientY };
+        if (event.changedTouches) {
+            this.touchId = event.changedTouches[0].identifier;
+        }
+    }
+
+    handleMove(event) {
+        if (!this.active) return;
+        let point = event;
+        if (event.changedTouches) {
+            const touch = Array.from(event.changedTouches).find(t => t.identifier === this.touchId);
+            if (!touch) return;
+            point = touch;
+        }
+
+        const xDiff = point.clientX - this.dragStart.x;
+        const yDiff = point.clientY - this.dragStart.y;
+        const distance = Math.min(this.maxDistance, Math.hypot(xDiff, yDiff));
+        const angle = Math.atan2(yDiff, xDiff);
+        const xPosition = distance * Math.cos(angle);
+        const yPosition = distance * Math.sin(angle);
+
+        this.element.style.transform = `translate3d(${xPosition}px, ${yPosition}px, 0px)`;
+
+        const scaled = distance < this.deadzone ? 0 : (distance - this.deadzone) / (this.maxDistance - this.deadzone);
+        this.value = {
+            x: parseFloat((scaled * Math.cos(angle)).toFixed(2)),
+            y: parseFloat((scaled * Math.sin(angle)).toFixed(2))
+        };
+    }
+
+    handleUp(event) {
+        if (!this.active) return;
+        if (event.changedTouches && event.changedTouches[0].identifier !== this.touchId) return;
+        this.element.style.transition = '.2s';
+        this.element.style.transform = 'translate3d(0px, 0px, 0px)';
+        this.value = { x: 0, y: 0 };
+        this.touchId = null;
+        this.active = false;
+    }
+}
+
+let joystick1 = new JoystickController('stick1', 64, 8);
+let joystick2 = new JoystickController('stick2', 64, 8);
+
+function update() {
+    dispatchManualControl();
+    requestAnimationFrame(update);
+}
+
+updateVideoStream();
+initButtons();
+update();
+setInterval(updateTelemetry, telemetryInterval);
+setMode('manual');
+</script>
+</body>
+</html>

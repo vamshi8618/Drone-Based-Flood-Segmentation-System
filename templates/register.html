@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <style>
+    /* General body styling */
+    body {
+      font-family: Arial, sans-serif;
+      background: url("{{ url_for('static', filename='remotebgimge.avif') }}") no-repeat center center fixed;
+      background-size: cover; /* Makes the background image cover the entire viewport */
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #fff;
+    }
+
+    /* Container styling */
+    .container {
+      background: rgba(0, 0, 0, 0.6); /* Slightly darker overlay for contrast */
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    /* Heading styling */
+    h2 {
+      font-size: 28px;
+      margin-bottom: 25px;
+      color: #ffcccb;
+    }
+
+    /* Input field container styling */
+    .input-container {
+      position: relative;
+      margin-bottom: 20px; /* Adds spacing between input fields */
+      text-align: center;
+    }
+
+    /* Input fields styling */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 80%; /* Reduces the length of the input fields */
+      padding: 12px; /* Slightly smaller padding */
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 25px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 16px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #ffcccb;
+      transform: scale(1.03);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Button styling */
+    button {
+      width: 80%; /* Matches the width of the input fields */
+      padding: 12px;
+      background: linear-gradient(135deg, #ff7eb3, #ff758c);
+      border: none;
+      border-radius: 25px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s, background 0.3s;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #ff758c, #ff7eb3);
+      transform: translateY(-2px);
+    }
+
+    /* Link styling */
+    a {
+      display: block;
+      margin-top: 15px;
+      color: #ffcccb;
+      text-decoration: underline;
+      font-size: 14px;
+      transition: color 0.3s;
+    }
+
+    a:hover {
+      color: #ff758c;
+    }
+
+    /* Mobile-friendly adjustments */
+    @media (max-width: 600px) {
+      h2 {
+        font-size: 20px;
+      }
+
+      button {
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      input {
+        padding: 10px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Register</h2>
+    <form method="POST" action="/register">
+      <div class="input-container">
+        <input type="text" name="name" placeholder="Full Name" required>
+      </div>
+      <div class="input-container">
+        <input type="email" name="email" placeholder="Email Address" required>
+      </div>
+      <div class="input-container">
+        <input type="text" name="username" placeholder="Username" required>
+      </div>
+      <div class="input-container">
+        <input type="password" name="password" placeholder="Password" required>
+      </div>
+      <button type="submit">Register</button>
+    </form>
+    <a href="/">Already have an account? Log In</a>
+  </div>
+</body>
+</html>

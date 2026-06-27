@@ -1,0 +1,186 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <style>
+     body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        padding: 0;
+        background: url("{{ url_for('static', filename='loginbgimge.avif') }}") no-repeat center center fixed;
+        background-size: cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: #333;
+    }
+
+    .container {
+        background: rgba(255, 255, 255, 0); /* Fully transparent background */
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        width: 100%;
+        max-width: 400px;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    .container:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    h2 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+        color: white; /* Title color changed to white */
+    }
+
+    input[type="text"], input[type="password"] {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-size: 16px;
+        outline: none;
+        transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus, input[type="password"]:focus {
+        border-color: #4caf50;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        background-color: #007BFF; /* Updated button color */
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    a {
+        display: block;
+        margin-top: 15px;
+        color: navy; /* Updated link color */
+        text-decoration: none;
+        font-size: 14px;
+        transition: color 0.3s ease;
+    }
+
+    a:hover {
+        color: #003366;
+        text-decoration: underline;
+    }
+
+    .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #ffebee;
+        color: #b71c1c;
+        padding: 20px;
+        border: 1px solid #ef9a9a;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+        text-align: center;
+        animation: popupFadeIn 0.4s ease;
+    }
+
+    .popup p {
+        margin: 0;
+        font-size: 16px;
+    }
+
+    .popup button {
+        background: none;
+        border: 2px solid #b71c1c;
+        color: #b71c1c;
+        font-weight: bold;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .popup button:hover {
+        background: #b71c1c;
+        color: white;
+    }
+
+    @keyframes popupFadeIn {
+        from {
+            opacity: 0;
+            transform: translate(-50%, -60%);
+        }
+        to {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            width: 90%;
+            padding: 20px;
+        }
+
+        h2 {
+            font-size: 1.6em;
+        }
+
+        button, input[type="text"], input[type="password"] {
+            font-size: 14px;
+        }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Log In</h2> <!-- Title color now white -->
+    <form method="POST" action="/login">
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit">Log In</button>
+    </form>
+    <a href="/register">Don't have an account? Sign Up</a>
+  </div>
+
+  <!-- Popup for error messages -->
+  <div class="popup" id="errorPopup">
+    <p id="errorMessage"></p>
+    <button onclick="closePopup()">Close</button>
+  </div>
+
+  <script>
+    // Display error message if flash message is set
+    const errorMessage = "{{ get_flashed_messages(category_filter=['error'])[0] if get_flashed_messages(category_filter=['error']) else '' }}";
+    if (errorMessage) {
+      document.getElementById('errorMessage').innerText = errorMessage;
+      document.getElementById('errorPopup').style.display = 'block';
+    }
+
+    // Close the popup
+    function closePopup() {
+      document.getElementById('errorPopup').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
